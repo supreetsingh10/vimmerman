@@ -32,7 +32,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
 Plug 'dylanaraps/wal.vim'
-Plug 'valloric/youcompleteme'
+"Plug 'valloric/youcompleteme'
 call plug#end()
 let mapleader=" "
 
@@ -50,7 +50,6 @@ function Hi()
 endfunction
 augroup somethang
     autocmd!
-    autocmd InsertEnter :execute 'echo "Hi"'
     autocmd BufReadPre *.txt set wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
     autocmd BufReadPre *.txt highlight ColorColumn ctermbg=0 guibg=lightgrey
 augroup END
