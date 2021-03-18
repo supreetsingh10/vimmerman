@@ -4,4 +4,9 @@ curl https://raw.githubusercontent.com/supreetsingh10/vimmerman/master/vimmer.sh
 
 Then enter vim and 
 Hit escape then type 
+
+:source % 
+
+and then 
 :PlugInstall 
+
