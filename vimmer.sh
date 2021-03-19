@@ -17,7 +17,7 @@ case $ID_LIKE in
        curl -o ~/.vimrc 'https://raw.githubusercontent.com/supreetsingh10/vimmerman/master/vimrc' 
        ;;
 
-   "ubuntu debian")
+   "debian")
        echo "Installing vim"
        sudo apt update && sudo apt upgrade && sudo apt install vim
        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
