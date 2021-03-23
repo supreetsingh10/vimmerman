@@ -32,7 +32,7 @@ Plug 'junegunn/fzf.vim'
 Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
 Plug 'dylanaraps/wal.vim'
-"Plug 'valloric/youcompleteme'
+Plug 'valloric/youcompleteme'
 call plug#end()
 let mapleader=" "
 
@@ -45,48 +45,33 @@ let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
   \ }
 
-function Hi()
-    execute 'echo "Hi"'
-endfunction
-augroup somethang
-    autocmd!
-    autocmd BufReadPre *.txt set wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
-    autocmd BufReadPre *.txt highlight ColorColumn ctermbg=0 guibg=lightgrey
-augroup END
-
-function Filename(filen)
-    let length=strlen(filen)
-    length=length - 4
-    return filen[:length]
-endfunction
-
 function Runner()
     execute ':w'
     let suff=&filetype
     if suff == 'cpp'
-        !echo Compiling && g++ % && echo "\nThe program is running now " && ./a.out
+        !echo Compiling && g++ % && echo "The program is running now " && ./a.out
     elseif suff == 'c'
-        !echo Compiling C&& gcc % && echo "\nThe program is running now " && ./a.out
+        !echo Compiling C&& gcc % && echo "The program is running now " && ./a.out
     elseif suff == 'python'
-       !echo "The snake has crawled\n" && python3 %
+       !echo "The snake has crawled" && python3 %
     elseif suff == 'tex'
         !echo "Writing....." && pdflatex % 
     elseif suff == 'sh'
-        !echo "Bashing\n" && bash %
-    "elseif suff == 'java'
-        "echo Coffee has brewed
-        "!javac %
-        "let runfile=@%
-        "runfile=call Filename(runfile)
-        "!java runfile
+        !echo "Bashing" && bash %
     elseif suff == 'go'
-        !echo "We are going\n" && go run %
+        !echo "We are going" && go run %
     endif
 endfunction
+
+augroup something
+    autocmd!
+    autocmd Filetype text set wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
+augroup END
 
 function Ender()
     :normal Go 
     :startinsert
+    :normal zz
 endfunction
 
 function Search_and_destroy()
@@ -94,6 +79,9 @@ function Search_and_destroy()
     let kaboom=input("Enter the replacer: ")
     execute ':%s/\<'.destroyed.'\>/'.kaboom.'/gci'
 endfunction
+
+map bfn :bn<CR>
+map bfp :bp<CR>
 
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
