@@ -2,6 +2,7 @@
 
 echo "Setting up vim"
 
+#this is a comment
 . /etc/os-release
 
 echo "The ID is $ID_LIKE"

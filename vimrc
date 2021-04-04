@@ -20,13 +20,15 @@ set undofile
 set incsearch
 set wildmenu
 set completeopt-=preview
-set laststatus=2
+"set laststatus=2
 
 call plug#begin('~/.vim/plugged')
 Plug 'tweekmonster/gofmt.vim'
 Plug 'itchyny/lightline.vim'
 Plug 'jremmen/vim-ripgrep'
+Plug 'eemed/sitruuna.vim'
 Plug 'tpope/vim-fugitive'
+Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
 Plug 'junegunn/fzf.vim'
 Plug 'mbbill/undotree'
@@ -37,13 +39,19 @@ call plug#end()
 let mapleader=" "
 
 set background=dark
-colorscheme gruvbox
+colorscheme sitruuna
 hi Normal guibg=NONE ctermbg=NONE
 highlight LineNr ctermfg=yellow
 
+"ycm completer
 let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
   \ }
+
+"lightline colorscheme
+let g:lightline = {
+            \ 'colorscheme': 'sitruuna'
+            \}
 
 function Runner()
     execute ':w'
@@ -80,9 +88,22 @@ function Search_and_destroy()
     execute ':%s/\<'.destroyed.'\>/'.kaboom.'/gci'
 endfunction
 
+"git and vim
+nmap <leader>gs :G<CR>
+nmap <leader>gcc :Gcommit<CR>
+nmap <leader>gh :diffget //3<CR>
+nmap <leader>gu :diffget //2<CR>
+
+
+"buffer movements and rearranging splits
 map bfn :bn<CR>
 map bfp :bp<CR>
+map mvk :<C-w> <bar> :wincmd K<CR>
+map mvj :<C-w> <bar> :wincmd J<CR>
+map mvh :<C-w> <bar> :wincmd H<CR>
+map mvl :<C-w> <bar> :wincmd L<CR>
 
+"remaps for the commands
 nnoremap <leader>h :wincmd h<CR>
 nnoremap <leader>j :wincmd j<CR>
 nnoremap <leader>k :wincmd k<CR>
