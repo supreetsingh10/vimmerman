@@ -1,5 +1,6 @@
 syntax on 
 set noshowmode
+set shell=/bin/zsh
 set hidden
 set showcmd
 set updatetime=300
@@ -24,22 +25,24 @@ set completeopt-=preview
 
 call plug#begin('~/.vim/plugged')
 Plug 'tweekmonster/gofmt.vim'
-Plug 'itchyny/lightline.vim'
 Plug 'jremmen/vim-ripgrep'
 Plug 'eemed/sitruuna.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
 Plug 'junegunn/fzf.vim'
+Plug 'stsewd/fzf-checkout.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
 Plug 'dylanaraps/wal.vim'
 Plug 'valloric/youcompleteme'
 call plug#end()
 let mapleader=" "
+set termwinkey=<C-L>
 
 set background=dark
-colorscheme sitruuna
+colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
 highlight LineNr ctermfg=yellow
 
@@ -47,11 +50,6 @@ highlight LineNr ctermfg=yellow
 let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
   \ }
-
-"lightline colorscheme
-let g:lightline = {
-            \ 'colorscheme': 'sitruuna'
-            \}
 
 function Runner()
     execute ':w'
@@ -68,12 +66,15 @@ function Runner()
         !echo "Bashing" && bash %
     elseif suff == 'go'
         !echo "We are going" && go run %
+    elseif suff == 'perl'
+        !echo "See the perl" && perl %
     endif
 endfunction
 
 augroup something
     autocmd!
-    autocmd Filetype text set wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
+    autocmd Filetype markdown set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
+    autocmd Filetype text set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
 augroup END
 
 function Ender()
@@ -88,16 +89,20 @@ function Search_and_destroy()
     execute ':%s/\<'.destroyed.'\>/'.kaboom.'/gci'
 endfunction
 
+function BufferJumper()
+    let buff=input("Enter the buffer number you want to go to: ")
+    execute ':buffer '.buff
+endfunction
+
 "git and vim
 nmap <leader>gs :G<CR>
-nmap <leader>gcc :Gcommit<CR>
-nmap <leader>gh :diffget //3<CR>
-nmap <leader>gu :diffget //2<CR>
+nmap <leader>tit :vertical botright terminal<CR>
 
 
 "buffer movements and rearranging splits
 map bfn :bn<CR>
 map bfp :bp<CR>
+map bu :buffers<CR>
 map mvk :<C-w> <bar> :wincmd K<CR>
 map mvj :<C-w> <bar> :wincmd J<CR>
 map mvh :<C-w> <bar> :wincmd H<CR>
@@ -115,8 +120,11 @@ nnoremap <silent><Leader>- :vertical resize -5<CR>
 nnoremap <silent> <leader>jd :YcmCompleter GoTo<CR>
 nnoremap <silent> <leader>gr :YcmCompleter GoToReferences<CR>
 nnoremap <silent> <leader>rr :YcmCompleter RefractorRename<space>
-nnoremap <leader>f :Files<CR>
+nnoremap <leader>f :FZF ~<CR>
+nnoremap <leader>cd :Files<CR>
 nnoremap <leader>z :q!<CR>
 nnoremap <leader>s :call Runner()<CR>
 nnoremap <leader>ei :call Ender()<CR>
 nnoremap <leader>sad :call Search_and_destroy()<CR>
+nnoremap <leader>tty :below terminal <CR><C-\><C-N> <CR> below resize -10<CR>
+nnoremap <leader>bu :call BufferJumper()<CR>
