@@ -41,15 +41,19 @@ call plug#end()
 let mapleader=" "
 set termwinkey=<C-L>
 
+"gruvbox configs 
 set background=dark
 colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
 highlight LineNr ctermfg=yellow
+let g:gruvbox_contrast_dark = 'hard'
+let g:gruvbox_hls_cursor = 'green'
 
 "ycm completer
 let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
   \ }
+let g:ycm_echo_current_diagnostic=1
 
 function Runner()
     execute ':w'
