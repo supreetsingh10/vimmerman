@@ -32,7 +32,6 @@ Plug 'vim-airline/vim-airline'
 Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
 Plug 'junegunn/fzf.vim'
 Plug 'stsewd/fzf-checkout.vim'
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
 Plug 'dylanaraps/wal.vim'
@@ -41,14 +40,18 @@ call plug#end()
 let mapleader=" "
 set termwinkey=<C-L>
 
+"Highlighting 
+
+
 "gruvbox configs 
 set background=dark
 colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
-highlight LineNr ctermfg=yellow
+highlight LineNr ctermfg=LightGreen
 let g:gruvbox_contrast_dark = 'hard'
 let g:gruvbox_hls_cursor = 'green'
 
+highlight Comment gui=italic cterm=italic ctermfg=grey
 "ycm completer
 let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
@@ -78,7 +81,8 @@ endfunction
 augroup something
     autocmd!
     autocmd Filetype markdown set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
-    autocmd Filetype text set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
+    autocmd Filetype text set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120 
+    autocmd Filetype text colorscheme sitruuna
 augroup END
 
 function Ender()
