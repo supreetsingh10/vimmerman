@@ -36,27 +36,38 @@ Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
 Plug 'dylanaraps/wal.vim'
 Plug 'valloric/youcompleteme'
+Plug 'sainnhe/sonokai'
 call plug#end()
 let mapleader=" "
 set termwinkey=<C-L>
 
-"Highlighting 
+"sonokai
+if has('termguicolors')
+  set termguicolors
+endif
 
+"let g:sonokai_enable_italic = 0
+let g:sonokai_style = 'andromeda'
+let g:sonokai_transparent_background = 1
+let g:sonokai_show_eob = 0
+let g:sonokai_diagnostic_text_highlight = 1
+let g:sonokai_better_performance = 1
+"set background=dark
+colorscheme sonokai
+"hi Normal guibg=NONE ctermbg=NONE
 
 "gruvbox configs 
-set background=dark
-colorscheme gruvbox
-hi Normal guibg=NONE ctermbg=NONE
-highlight LineNr ctermfg=LightGreen
-let g:gruvbox_contrast_dark = 'hard'
-let g:gruvbox_hls_cursor = 'green'
+"let g:gruvbox_contrast_dark = 'hard'
+"let g:gruvbox_hls_cursor = 'green'
 
+"highlight LineNr ctermfg=Green
 highlight Comment gui=italic cterm=italic ctermfg=grey
 "ycm completer
 let g:ycm_semantic_triggers =  {
   \   'c,cpp,objc,go,java,py': [ 're!\w{3}', '_' ],
   \ }
-let g:ycm_echo_current_diagnostic=1
+let g:ycm_echo_current_diagnostic=0
+let g:ycm_max_num_candidates = 20
 
 function Runner()
     execute ':w'
@@ -75,6 +86,8 @@ function Runner()
         !echo "We are going" && go run %
     elseif suff == 'perl'
         !echo "See the perl" && perl %
+    elseif suff == 'javascript'
+        !echo "Jabha Schript" && node %
     endif
 endfunction
 
