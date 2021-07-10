@@ -41,6 +41,25 @@ call plug#end()
 let mapleader=" "
 set termwinkey=<C-L>
 
+"airline 
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+
+let g:airline_left_sep = ''
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
+let g:airline_symbols.branch = ''
+let g:airline_symbols.colnr = ''
+let g:airline_symbols.readonly = ''
+let g:airline_symbols.linenr = '☰'
+let g:airline_symbols.maxlinenr = ''
+let g:airline_symbols.dirty='⚡'
+let g:airline_symbols.space = ' '
+
 "sonokai
 if has('termguicolors')
   set termguicolors
@@ -54,7 +73,7 @@ let g:sonokai_diagnostic_text_highlight = 1
 let g:sonokai_better_performance = 1
 "set background=dark
 colorscheme sonokai
-"hi Normal guibg=NONE ctermbg=NONE
+hi Normal guibg=NONE ctermbg=NONE
 
 "gruvbox configs 
 "let g:gruvbox_contrast_dark = 'hard'
@@ -68,6 +87,9 @@ let g:ycm_semantic_triggers =  {
   \ }
 let g:ycm_echo_current_diagnostic=0
 let g:ycm_max_num_candidates = 20
+let g:airline#extensions#ycm#enabled = 1
+let g:airline#extensions#ycm#error_symbol = 'E:'
+let g:airline#extensions#ycm#warning_symbol = 'W:'
 
 function Runner()
     execute ':w'
