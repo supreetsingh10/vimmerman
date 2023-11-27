@@ -1,4 +1,5 @@
 syntax on 
+set cursorline
 set noshowmode
 set shell=/bin/zsh
 set hidden
@@ -21,21 +22,31 @@ set undofile
 set incsearch
 set wildmenu
 set completeopt-=preview
-"set laststatus=2
+
+" automatically installs the vimplug if it does not exist. 
+" May require a vim restart
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+endif
+
+" Run PlugInstall if there are missing plugins
+autocmd VimEnter * if len(filter(values(g:plugs), '!isdirectory(v:val.dir)'))
+  \| PlugInstall --sync | source $MYVIMRC
+\| endif
 
 call plug#begin('~/.vim/plugged')
 "Plug 'jremmen/vim-ripgrep'
-Plug 'eemed/sitruuna.vim'
-Plug 'tpope/vim-fugitive'
 Plug 'vim-airline/vim-airline'
+Plug 'tpope/vim-fugitive'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'junegunn/fzf', {'do': {-> fzf#install()}}
 Plug 'junegunn/fzf.vim'
 Plug 'stsewd/fzf-checkout.vim'
 Plug 'mbbill/undotree'
 Plug 'morhetz/gruvbox'
-Plug 'valloric/youcompleteme'
-Plug 'mattn/emmet-vim'
 Plug 'ashfinal/vim-colors-paper'
+Plug 'fatih/vim-go', {'do': ':GoUpdateBinaries'}
 call plug#end()
 let mapleader=" "
 set termwinkey=<C-L>
@@ -49,22 +60,23 @@ au Filetype css setl omnifunc=csscomplete#CompleteCSS
 
 
 set background=dark
-colorscheme paper
+colorscheme gruvbox
 hi Normal guibg=NONE ctermbg=NONE
 let g:gruvbox_contrast_dark = 'hard'
 
-"highlight LineNr ctermfg=Green
+
+highlight LineNr ctermfg=Green
 highlight htmlArgs cterm=italic
 highlight Comment gui=italic cterm=italic ctermfg=grey
 
-"airline 
+
 if !exists('g:airline_symbols')
     let g:airline_symbols = {}
 endif
 
+let g:airline#extensions#lsp#enabled = 1
 let g:airline_left_sep = ''
 let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_left_alt_sep = ''
 let g:airline_right_sep = ''
 let g:airline_right_alt_sep = ''
@@ -78,29 +90,22 @@ let g:airline_symbols.space = ' '
 let g:airline#extensions#ycm#enabled = 1
 let airline#extensions#syntastic#stl_format_err = '%E{[%fe(#%e)]}'
 let g:airline#extensions#ycm#error_symbol = 'E:'
-let g:airline#extensions#tabline#buffer_nr_show = 1
 let airline#extensions#syntastic#stl_format_warn = '%W{[%fw(#%w)]}'
 let g:airline#extensions#ycm#warning_symbol = 'W:'
+let g:airline#extensions#tabline#buffer_nr_show = 1
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#show_splits = 1
 let g:airline#extensions#tabline#buf_label_first = 1
 let g:airline#extensions#tabline#show_tab_nr = 1
 
-"ycm completer
-let g:ycm_echo_current_diagnostic = 1
-let g:ycm_always_populate_location_list = 1
-let g:ycm_max_num_candidates = 20
-let g:ycm_max_diagnostics_to_display = 1000
-let g:ycm_semantic_triggers =  {
-  \   'c,cpp,objc,go,java,python,js,jsx,rust': [ 're!\w{3}', '_' ],
-  \ }
-let g:ycm_auto_trigger = 1
-let g:ycm_filetype_whitelist = {'*': 1} 
-let g:ycm_filetype_blacklist = {'text' : 1}
-let g:ycm_error_symbol = '>>'
-let g:ycm_warning_symbol = '>'
 
-let g:fzf_preview_window = ['right:50%', 'ctrl-/']
+let g:fzf_preview_window = ['right,50%', 'ctrl-/']
+
+" Preview window is hidden by default. You can toggle it with ctrl-/.
+" It will show on the right with 50% width, but if the width is smaller
+" than 70 columns, it will show above the candidate list
+
+let g:fzf_preview_bash = '/usr/bin/bash'
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
   \ 'bg':      ['bg', 'Normal'],
@@ -118,8 +123,13 @@ let g:fzf_colors =
 
 function Vimg_this_dir()
     let l:pattern = expand("<cword>")
-    let l:dirs = expand("%:h/")
+    let l:dirs = getcwd()
     execute 'vimgrep ' l:pattern l:dirs."/*"
+endfunction
+
+function Vimg_this_file() 
+    let l:pattern = expand("<cword>")
+    execute 'vimgrep ' l:pattern." %"
 endfunction
 
 function Vimg_root_dir()
@@ -131,6 +141,11 @@ function Vimg_all_dirs()
     let l:pattern = expand("<cword>")
     let l:dirs = expand("%:h/")
     execute 'vimgrep ' l:pattern l:dirs."/**/*"
+endfunction
+
+function RipperSearch() 
+    let l:word = expand('<cword>')
+    execute 'Rg ' l:word
 endfunction
 
 function Runner()
@@ -158,7 +173,7 @@ function Runner()
         !echo "We playing" && ansible-playbook %
     elseif suff == 'rust'
         let l:x = expand('%:p')
-        execute '!rustc ' l:x 
+        execute '!rustc ' l:x
     endif
 endfunction
 
@@ -170,7 +185,7 @@ endfunction
 
 function Search_and_destroy()
    let destroyed=input("Enter the thing you want to destroy: ")
-    let kaboom=input("Enter the replacer: ")
+   let kaboom=input("Enter the replacer: ")
     execute ':%s/\<'.destroyed.'\>/'.kaboom.'/gci'
 endfunction
 
@@ -179,22 +194,29 @@ function BufferJumper()
     execute ':buffer '.buff
 endfunction
 
+function QFListBuffer()
+    let buff=getqflist()
+endfunction
+
 function FRunner() 
     let lookup=input("Enter the directory: ")
-    :execute ':FZF' .lookup
+    :execute ':Files' .lookup
 endfunction
 
 function Presentsearch() 
     let dir=getcwd()
-    execute ':FZF'.dir
+    execute ':Files'.dir
 endfunction
 
+
 augroup ansible_vim
+    au!
     autocmd!
     autocmd BufNewFile,BufRead hosts setfiletype yaml.ansible
 augroup END
 
 augroup something
+    au!
     autocmd!
     autocmd Filetype markdown set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
     autocmd Filetype text set spell wrap linebreak nolist colorcolumn=122 textwidth=120 wrapmargin=120
@@ -206,8 +228,8 @@ nmap <leader>gs :G<CR>
 
 
 "buffer movements and rearranging splits
-map bfn :bn<CR>
-map bfp :bp<CR>
+map <C-Right> :bn<CR>
+map <C-Left> :bp<CR>
 map bu :buffers<CR>
 map mvk :<C-w> <bar> :wincmd K<CR>
 map mvj :<C-w> <bar> :wincmd J<CR>
@@ -218,10 +240,19 @@ map mvl :<C-w> <bar> :wincmd L<CR>
 nnoremap <leader>tit :vertical botright terminal<CR>
 nnoremap <leader>tty :below terminal <CR>
 
+"vim git
+nnoremap <leader>G :Git <CR>
+
 "vimgrep remaps 
+set grepprg=rg\ --vimgrep
+set grepformat^=%f:%l:%c:%m
+
+nnoremap <leader>Rg :Rg <CR>
+nnoremap <leader>Rw :call RipperSearch()<CR>
 nnoremap <leader>va :call Vimg_all_dirs() <CR>
 nnoremap <leader>vt :call Vimg_this_dir() <CR>
 nnoremap <leader>vr :call Vimg_root_dir() <CR> 
+nnoremap <leader>vf :call Vimg_this_file() <CR>
 
 "Quick fix Lists
 map <C-k> :cprevious <CR> 
@@ -240,16 +271,21 @@ nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>pv :wincmd v<bar> :Ex <bar> :vertical resize 30<CR>
 nnoremap <silent><Leader>+ :vertical resize +5<CR>
 nnoremap <silent><Leader>- :vertical resize -5<CR>
-nnoremap <silent> <leader>jd :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>jl :YcmCompleter GoToDeclaration<CR> 
-nnoremap <silent> <leader>jf :YcmCompleter GoToDefinition<CR> 
-nnoremap <silent> <leader>jn :YcmCompleter GoToInclude<CR> 
-nnoremap <silent> <leader>gr :YcmCompleter GoToReferences<CR>
-nnoremap <silent> <leader>rr :YcmCompleter RefractorRename<space>
-nnoremap <silent> <leader>pr :YcmCompleter GetParent<CR> 
-nnoremap <silent> <leader>doc :YcmCompleter GetDoc<CR> 
-nnoremap <leader>fz :FZF / <CR>
-nnoremap <leader>cd :call Presentsearch()<CR>
+
+"Coc completer 
+inoremap <expr> <tab> coc#pum#visible() ? coc#pum#confirm() : "\<CR>"
+nnoremap <leader>hv :call CocActionAsync('definitionHover') <CR>
+nnoremap <silent><leader>jd :call CocActionAsync('jumpDefinition') <CR>
+nnoremap <silent><leader>js :call CocActionAsync('jumpDefinition', 'vsplit') <CR>
+nnoremap <silent><leader>jl :call CocActionAsync('jumpDeclaration') <CR>
+nnoremap <silent><leader>jil :call CocActionAsync('jumpImplementation') <CR>
+nnoremap <silent><leader>ot :call CocActionAsync('organizeImport') <CR>
+nnoremap <silent><leader>qf :call CocActionAsync('doQuickFix') <CR>
+highlight CocErrorHighlight ctermfg=Red 
+highlight CocErrorVirtualText ctermfg=Red
+
+nnoremap <leader>fz :Files / <CR>
+nnoremap <leader>fcd :call Presentsearch()<CR>
 nnoremap <leader>fzf :call FRunner()<CR>
 nnoremap <leader>z :q!<CR>
 nnoremap <leader>s :call Runner()<CR>

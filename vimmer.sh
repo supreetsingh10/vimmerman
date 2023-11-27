@@ -20,7 +20,7 @@ case $ID_LIKE in
 
    "debian")
        echo "Installing vim"
-       sudo apt -y update && sudo apt -y upgrade && sudo -y autoremove && sudo apt install vim
+       sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y && sudo apt install vim 
        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
        https://raw.githubusercontent.com/junegunn/vim-plug/master/
        rm ~/.vimrc 
